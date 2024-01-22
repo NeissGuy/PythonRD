@@ -1,2 +1,13 @@
+from random import *
+
 print("hello world")
 print("goodbye world")
+
+def genlist(L):
+    a = randint(1,100)
+    L=[]
+    for i in range(a):
+        b=randint(1,100)
+        L.append(b)
+    return(L)
+

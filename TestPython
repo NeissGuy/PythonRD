@@ -2,19 +2,6 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
-
-'''
-img = cv2.imread('t.jpg')
-
-dimension = img.shape
-
-
-height = img.shape[0]
-width = img.shape[1]
-channels = img.shape[2]
-'''
-
-
 # Open an image file
 image_path = "Z:\projet\picture\ID_x10k.tif"
 img = cv2.imread(image_path)

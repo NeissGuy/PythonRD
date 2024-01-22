@@ -1,2 +1,36 @@
 print("hello world")
 print("goodbye world")
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+
+
+'''
+img = cv2.imread('t.jpg')
+
+dimension = img.shape
+
+
+height = img.shape[0]
+width = img.shape[1]
+channels = img.shape[2]
+'''
+
+
+# Open an image file
+image_path = "Z:\projet\picture\ID_x10k.tif"
+img = cv2.imread(image_path)
+
+# Convert BGR to RGB (OpenCV reads images in BGR format by default)
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Display the image
+plt.imshow(img_rgb)
+plt.axis('off')  # Turn off axis labels
+plt.show()
+
+# Get the size (dimensions) of the image
+height, width, channels = img.shape
+
+# Display the size
+print("Image size (width x height):", width, "x", height)

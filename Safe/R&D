@@ -1,0 +1,93 @@
+## pip install pygame
+
+import pygame
+import sys
+import random
+
+# Inicializar Pygame
+pygame.init()
+
+# Definir colores
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
+# Configuraciones del juego
+WIDTH, HEIGHT = 600, 400
+GRID_SIZE = 20
+FPS = 10
+
+# Inicializar la pantalla
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Snake Game")
+
+# Función para dibujar la serpiente
+def draw_snake(snake):
+    for segment in snake:
+        pygame.draw.rect(screen, WHITE, segment)
+
+# Función principal del juego
+def main():
+    clock = pygame.time.Clock()
+
+    # Inicializar la posición de la serpiente y la dirección
+    snake = [pygame.Rect(WIDTH // 2, HEIGHT // 2, GRID_SIZE, GRID_SIZE)]
+    direction = (GRID_SIZE, 0)
+
+    # Inicializar la posición de la comida
+    food = pygame.Rect(random.randint(0, WIDTH // GRID_SIZE - 1) * GRID_SIZE,
+                       random.randint(0, HEIGHT // GRID_SIZE - 1) * GRID_SIZE,
+                       GRID_SIZE, GRID_SIZE)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and direction != (0, GRID_SIZE):
+                    direction = (0, -GRID_SIZE)
+                elif event.key == pygame.K_DOWN and direction != (0, -GRID_SIZE):
+                    direction = (0, GRID_SIZE)
+                elif event.key == pygame.K_LEFT and direction != (GRID_SIZE, 0):
+                    direction = (-GRID_SIZE, 0)
+                elif event.key == pygame.K_RIGHT and direction != (-GRID_SIZE, 0):
+                    direction = (GRID_SIZE, 0)
+
+        # Mover la serpiente
+        new_head = snake[0].move(direction)
+        snake.insert(0, new_head)
+
+        # Verificar colisión con la comida
+        if snake[0].colliderect(food):
+            food = pygame.Rect(random.randint(0, WIDTH // GRID_SIZE - 1) * GRID_SIZE,
+                               random.randint(0, HEIGHT // GRID_SIZE - 1) * GRID_SIZE,
+                               GRID_SIZE, GRID_SIZE)
+        else:
+            snake.pop()
+
+        # Verificar colisión con los bordes
+        if not (0 <= snake[0].left < WIDTH and 0 <= snake[0].top < HEIGHT):
+            pygame.quit()
+            sys.exit()
+
+        # Verificar colisión con la propia serpiente
+        if any(segment.colliderect(snake[0]) for segment in snake[1:]):
+            pygame.quit()
+            sys.exit()
+
+        # Limpiar la pantalla
+        screen.fill(BLACK)
+
+        # Dibujar la serpiente y la comida
+        draw_snake(snake)
+        pygame.draw.rect(screen, RED, food)
+
+        # Actualizar la pantalla
+        pygame.display.flip()
+
+        # Controlar la velocidad del juego
+        clock.tick(FPS)
+
+if __name__ == "__main__":
+    main()

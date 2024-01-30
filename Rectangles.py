@@ -53,5 +53,79 @@ cv2.destroyAllWindows()
 
 print("Coordonnées et dérivées des contours ont été sauvegardées dans le fichier 'coordonnees_et_derivatives.txt'.")
 
-def exemple(n):
-    return "exemple"
+"""""
+Backup du code de maxime
+"""""
+
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+import cv2 # Import librairy to use image and draw on it 
+import matplotlib.pyplot as plt # For the plot function
+
+# Open an image file
+image_path = "Z:\projet\picture\ID_x10k.tif"
+img = cv2.imread(image_path)
+image = cv2.imread(image_path)
+
+# Convert BGR to RGB (OpenCV reads images in BGR format by default)
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+# Display the image
+plt.imshow(img_rgb)
+plt.axis('off')  # Turn off axis labels
+plt.show()
+
+# Get the size (dimensions) of the image
+height, width, channels = img.shape
+height, width, channels = image.shape
+
+# Display the size
+print("Image size (width x height):", width, "x", height)
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply GaussianBlur to reduce noise and help contour detection
+blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+# Apply Canny edge detector
+edges = cv2.Canny(blurred, 50, 150)
+
+# Find contours in the edged image
+contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# Draw the detected contours on the original image
+cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
+
+# Display the result
+cv2.imshow('Contours', image)
+
+
+# List to store aspect ratios
+aspect_ratios = []
+
+# Calculate and display the aspect ratio for each detected shape
+for contour in contours:
+    # Calculate the bounding box of the contour
+    x, y, w, h = cv2.boundingRect(contour)
+
+    # Calculate the aspect ratio
+    aspect_ratio = float(w) / h
+
+    # Print or display the aspect ratio
+    print("Aspect Ratio:", aspect_ratio)
+
+    # Append the aspect ratio to the list
+    aspect_ratios.append(aspect_ratio)
+
+# Plot histogram of aspect ratios
+plt.hist(aspect_ratios, bins=20, color='blue', edgecolor='black', alpha=0.7)
+plt.title('Histogram of Aspect Ratios of Detected Shapes')
+plt.xlabel('Aspect Ratio')
+plt.ylabel('Frequency')
+plt.show()
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()

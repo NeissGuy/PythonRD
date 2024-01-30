@@ -52,3 +52,6 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 print("Coordonnées et dérivées des contours ont été sauvegardées dans le fichier 'coordonnees_et_derivatives.txt'.")
+
+def exemple(n):
+    return "exemple"

@@ -1,28 +1,52 @@
 import subprocess
-import time
+import os
 
-def open_fiji_and_run_plugin():
-    # Path to the Fiji executable
-    fiji_path = r"C:\Users\felix\OneDrive\Documents\ENSMA\R&D\Fiji.app"
+def process_image(input_path, output_path):
+    # Chemin vers le programme Fiji
+    fiji_path = r"C:\Users\felix\OneDrive\Documents\ENSMA\R&D\Fiji.app\ImageJ-linux64"  # Assurez-vous que le chemin est correct
 
-    # Command to run Fiji
-    fiji_command = [fiji_path]
+    # Construction des chemins complets pour l'entrée et la sortie
+    input_image_path = os.path.abspath(input_path)
+    output_image_path = os.path.abspath(output_path)
 
-    # Run Fiji
-    fiji_process = subprocess.Popen(fiji_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    # Script ImageJ Macro
+    macro_script = """
+        // Ouvrir l'image
+        open('{}');
 
-    # Wait for Fiji to start
-    time.sleep(5)
+        // Appliquer un filtre de lissage (Gaussian Blur)
+        run('Gaussian Blur...', 'sigma=2');
 
-    # Send key shortcuts to open the plugin
-    fiji_process.stdin.write("run('Trainable Weka Segmentation');\n")
-    fiji_process.stdin.write("waitForImage();\n")
+        // Sauvegarder l'image résultante
+        saveAs('Tiff', '{}');
 
-    # Close Fiji
-    fiji_process.stdin.write("run('Quit');\n")
+        // Fermer l'image originale
+        close();
+    """.format(input_image_path, output_image_path)
 
-    # Wait for Fiji to close
-    fiji_process.wait()
+    # Chemin vers un fichier temporaire pour enregistrer le script ImageJ Macro
+    macro_script_path = "temp_macro.ijm"
+
+    try:
+        # Écrire le script ImageJ Macro dans le fichier temporaire
+        with open(macro_script_path, "w") as macro_file:
+            macro_file.write(macro_script)
+
+        # Commande complète pour exécuter Fiji avec le script inclus
+        full_command = '{} --headless --console --run "{}"'.format(fiji_path, macro_script_path)
+
+        # Exécutez la commande
+        subprocess.run(full_command)
+
+    finally:
+        # Supprimer le fichier temporaire après exécution
+        if os.path.exists(macro_script_path):
+            os.remove(macro_script_path)
 
 if __name__ == "__main__":
-    open_fiji_and_run_plugin()
+    # Remplacez ces chemins par les chemins appropriés vers votre image d'entrée et le lieu où vous souhaitez enregistrer l'image résultante
+    input_image_path = r"C:\Users\felix\OneDrive\Documents\ENSMA\RD\SavesFiji\Result2.png"
+    output_image_path = r"C:\Users\felix\OneDrive\Documents\ENSMA\RD\SavesFiji\TestFolderCode"
+
+    # Exécutez la fonction pour traiter l'image
+    process_image(input_image_path, output_image_path)
